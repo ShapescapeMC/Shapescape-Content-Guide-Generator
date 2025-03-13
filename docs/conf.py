@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'PLACEHOLDER'
+project = 'Shapescape Content Guide Generator'
 copyright = '2025, Shapescape'
 author = 'Shapescape'
 release = '1.0.0'
