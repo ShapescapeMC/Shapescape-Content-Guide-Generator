@@ -1,1 +1,1 @@
-git+https://github.com/Shapescape-Software/content-guide-generator@1.7.5
+git+https://github.com/ShapescapeMC/content-guide-generator@1.7.5
