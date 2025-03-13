@@ -1,0 +1,4 @@
+/* Better rendering for pixelart images. */
+.pixelart {
+    image-rendering: pixelated;
+}
