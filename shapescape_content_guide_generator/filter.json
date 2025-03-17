@@ -1,4 +1,5 @@
 {
+	"description": "Regolith filter that generates content guides.",
 	"exportData": true,
 	"filters": [
 		{
