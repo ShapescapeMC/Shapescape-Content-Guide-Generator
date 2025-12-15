@@ -1,0 +1,363 @@
+name: QR Code Scanner
+
+on:
+  # Only run when the workflow file itself is modified
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - '.github/workflows/qr-scanner.yml'
+  
+  pull_request:
+    branches:
+      - main
+      - master
+    paths:
+      - '.github/workflows/qr-scanner.yml'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+
+jobs:
+  scan-qr-codes:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          # Fetch full history to scan all branches if needed
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          pip install opencv-python-headless Pillow numpy
+      
+      - name: Download QR scanner script
+        run: |
+          cat > qr_code_scanner.py << 'EOF'
+          #!/usr/bin/env python3
+          """
+          QR Code Scanner - Recursively scan directories for images containing QR codes
+          """
+
+          import os
+          import sys
+          from pathlib import Path
+          from PIL import Image
+          import cv2
+          import numpy as np
+          from typing import List, Tuple, Optional
+          import argparse
+
+
+          class QRCodeScanner:
+              """Scanner for detecting QR codes in images within a directory structure"""
+              
+              # Supported image formats
+              SUPPORTED_FORMATS = {'.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff', '.webp'}
+              
+              def __init__(self, min_width: int = 100, min_height: int = 100):
+                  """
+                  Initialize the QR code scanner
+                  
+                  Args:
+                      min_width: Minimum image width to process (default: 100px)
+                      min_height: Minimum image height to process (default: 100px)
+                  """
+                  self.min_width = min_width
+                  self.min_height = min_height
+                  self.qr_detector = cv2.QRCodeDetector()
+                  
+              def is_image_file(self, filepath: Path) -> bool:
+                  """Check if file is a supported image format"""
+                  return filepath.suffix.lower() in self.SUPPORTED_FORMATS
+              
+              def check_image_size(self, filepath: Path) -> bool:
+                  """
+                  Check if image meets minimum size requirements
+                  
+                  Args:
+                      filepath: Path to the image file
+                      
+                  Returns:
+                      True if image is large enough, False otherwise
+                  """
+                  try:
+                      with Image.open(filepath) as img:
+                          width, height = img.size
+                          return width >= self.min_width and height >= self.min_height
+                  except Exception as e:
+                      print(f"Warning: Could not read image dimensions for {filepath}: {e}")
+                      return False
+              
+              def detect_qr_code(self, filepath: Path) -> Tuple[bool, Optional[str]]:
+                  """
+                  Detect QR code in an image
+                  
+                  Args:
+                      filepath: Path to the image file
+                      
+                  Returns:
+                      Tuple of (has_qr_code, decoded_data)
+                  """
+                  try:
+                      # Read image with OpenCV
+                      img = cv2.imread(str(filepath))
+                      
+                      if img is None:
+                          print(f"Warning: Could not load image {filepath}")
+                          return False, None
+                      
+                      # Detect and decode QR code
+                      data, bbox, _ = self.qr_detector.detectAndDecode(img)
+                      
+                      if bbox is not None and len(data) > 0:
+                          return True, data
+                      
+                      return False, None
+                      
+                  except Exception as e:
+                      print(f"Error processing {filepath}: {e}")
+                      return False, None
+              
+              def scan_directory(self, directory: Path, verbose: bool = False) -> List[dict]:
+                  """
+                  Recursively scan directory for images with QR codes
+                  
+                  Args:
+                      directory: Root directory to scan
+                      verbose: Print progress information
+                      
+                  Returns:
+                      List of dictionaries containing file info and QR code data
+                  """
+                  results = []
+                  total_images = 0
+                  processed_images = 0
+                  
+                  print(f"\nScanning directory: {directory}")
+                  print(f"Looking for images >= {self.min_width}x{self.min_height}px\n")
+                  
+                  # Walk through directory tree
+                  for root, dirs, files in os.walk(directory):
+                      # Skip .git directory
+                      if '.git' in root:
+                          continue
+                          
+                      for filename in files:
+                          filepath = Path(root) / filename
+                          
+                          # Check if it's an image file
+                          if not self.is_image_file(filepath):
+                              continue
+                          
+                          total_images += 1
+                          
+                          # Check image size
+                          if not self.check_image_size(filepath):
+                              if verbose:
+                                  print(f"Skipping (too small): {filepath.relative_to(directory)}")
+                              continue
+                          
+                          processed_images += 1
+                          
+                          if verbose:
+                              print(f"Checking: {filepath.relative_to(directory)}")
+                          
+                          # Detect QR code
+                          has_qr, data = self.detect_qr_code(filepath)
+                          
+                          if has_qr:
+                              result = {
+                                  'filepath': str(filepath),
+                                  'relative_path': str(filepath.relative_to(directory)),
+                                  'qr_data': data,
+                                  'size': filepath.stat().st_size
+                              }
+                              results.append(result)
+                              print(f"✓ QR CODE FOUND: {filepath.relative_to(directory)}")
+                              print(f"  Data: {data[:100]}{'...' if len(data) > 100 else ''}\n")
+                  
+                  print(f"\n{'='*60}")
+                  print(f"Scan complete!")
+                  print(f"Total image files found: {total_images}")
+                  print(f"Images processed (meeting size criteria): {processed_images}")
+                  print(f"Images with QR codes: {len(results)}")
+                  print(f"{'='*60}\n")
+                  
+                  return results
+              
+              def save_results(self, results: List[dict], output_file: Path):
+                  """Save scan results to a text file"""
+                  with open(output_file, 'w', encoding='utf-8') as f:
+                      f.write("QR Code Scan Results\n")
+                      f.write("=" * 60 + "\n\n")
+                      
+                      for i, result in enumerate(results, 1):
+                          f.write(f"{i}. {result['relative_path']}\n")
+                          f.write(f"   Full path: {result['filepath']}\n")
+                          f.write(f"   File size: {result['size']:,} bytes\n")
+                          f.write(f"   QR Data: {result['qr_data']}\n")
+                          f.write("\n")
+                      
+                      f.write(f"\nTotal images with QR codes: {len(results)}\n")
+                  
+                  print(f"Results saved to: {output_file}")
+
+
+          def main():
+              """Main entry point for the QR code scanner"""
+              parser = argparse.ArgumentParser(
+                  description='Scan directories for images containing QR codes',
+                  formatter_class=argparse.RawDescriptionHelpFormatter,
+                  epilog="""
+          Examples:
+            %(prog)s /path/to/project
+            %(prog)s /path/to/project --min-width 200 --min-height 200
+            %(prog)s /path/to/project --output results.txt --verbose
+                  """
+              )
+              
+              parser.add_argument(
+                  'directory',
+                  type=str,
+                  help='Directory to scan for images'
+              )
+              
+              parser.add_argument(
+                  '--min-width',
+                  type=int,
+                  default=100,
+                  help='Minimum image width in pixels (default: 100)'
+              )
+              
+              parser.add_argument(
+                  '--min-height',
+                  type=int,
+                  default=100,
+                  help='Minimum image height in pixels (default: 100)'
+              )
+              
+              parser.add_argument(
+                  '--output',
+                  type=str,
+                  help='Save results to a file (optional)'
+              )
+              
+              parser.add_argument(
+                  '--verbose',
+                  '-v',
+                  action='store_true',
+                  help='Print verbose progress information'
+              )
+              
+              args = parser.parse_args()
+              
+              # Validate directory
+              directory = Path(args.directory)
+              if not directory.exists():
+                  print(f"Error: Directory '{directory}' does not exist")
+                  sys.exit(1)
+              
+              if not directory.is_dir():
+                  print(f"Error: '{directory}' is not a directory")
+                  sys.exit(1)
+              
+              # Create scanner and run scan
+              scanner = QRCodeScanner(min_width=args.min_width, min_height=args.min_height)
+              results = scanner.scan_directory(directory, verbose=args.verbose)
+              
+              # Save results if output file specified
+              if args.output:
+                  output_path = Path(args.output)
+                  scanner.save_results(results, output_path)
+              
+              # Exit with error code if QR codes found (for CI/CD failure)
+              sys.exit(1 if results else 0)
+
+
+          if __name__ == '__main__':
+              main()
+          EOF
+          chmod +x qr_code_scanner.py
+      
+      - name: Run QR code scan
+        id: scan
+        run: |
+          python qr_code_scanner.py . --output qr_scan_results.txt --verbose || true
+          
+          # Check if any QR codes were found
+          if [ -f qr_scan_results.txt ]; then
+            echo "results_found=true" >> $GITHUB_OUTPUT
+          else
+            echo "results_found=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Upload scan results
+        if: steps.scan.outputs.results_found == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: qr-scan-results
+          path: qr_scan_results.txt
+          retention-days: 90
+      
+      - name: Comment on PR (if QR codes found)
+        if: github.event_name == 'pull_request' && steps.scan.outputs.results_found == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const results = fs.readFileSync('qr_scan_results.txt', 'utf8');
+            
+            const comment = `## ⚠️ QR Codes Detected
+            
+            This PR contains images with QR codes. Please review the scan results:
+            
+            \`\`\`
+            ${results}
+            \`\`\`
+            
+            Download the full report from the workflow artifacts.
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+      
+      - name: Create issue (if QR codes found on main)
+        if: github.ref == 'refs/heads/main' && steps.scan.outputs.results_found == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const results = fs.readFileSync('qr_scan_results.txt', 'utf8');
+            
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `QR Codes Detected in Repository`,
+              body: `## QR Code Scan Report
+              
+              The automated scan found QR codes in the following images:
+              
+              \`\`\`
+              ${results}
+              \`\`\`
+              
+              Please review these findings and take appropriate action.
+              
+              Scan date: ${new Date().toISOString()}
+              Commit: ${context.sha}
+              `,
+              labels: ['security', 'audit']
+            });
