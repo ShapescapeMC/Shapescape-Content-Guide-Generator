@@ -5,7 +5,6 @@ Edit cover-eyebrow / cover-meta strings if needed for your project.
 -->
 <section class="cover">
   <img class="cover-mark" src="./images/shapescape_logo_on_dark.svg" alt="Shapescape" />
-  <p class="cover-eyebrow">Shapescape Studio</p>
   <h1 class="cover-title">PRODUCTNAME</h1>
   <p class="cover-subtitle">Content Guide</p>
   <div class="cover-meta">
