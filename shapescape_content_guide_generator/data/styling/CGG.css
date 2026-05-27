@@ -1,0 +1,645 @@
+/* ============================================================
+   Shapescape Content Guide stylesheet
+   Brand system: Mauve / Oxford Blue / Frostbite / Emerald / Inchworm
+   Fonts: PP Agrandir Heavy (display), Inter (body)
+   Render target: md-to-pdf (Chromium / Puppeteer print)
+   ============================================================ */
+
+/* -- Design tokens -- */
+:root {
+  --c-mauve: #cfb7f5;
+  --c-mauve-soft: #ece2fb;
+  --c-mauve-wash: #f6f0fe;
+  --c-oxford: #041c3b;
+  --c-oxford-soft: #1a3253;
+  --c-frostbite: #ef38a9;
+  --c-frostbite-wash: #fde7f4;
+  --c-emerald: #4b927e;
+  --c-emerald-wash: #e3efeb;
+  --c-inchworm: #cdf462;
+  --c-inchworm-wash: #f3fbd9;
+  --c-ink: #041c3b;
+  --c-ink-muted: #4a5b73;
+  --c-rule: #e6e9ef;
+
+  --font-display: "PP Agrandir Heavy", "Agrandir", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Menlo", "Consolas", monospace;
+
+  --r-sm: 4pt;
+  --r-md: 8pt;
+  --r-lg: 16pt;
+  --r-xl: 24pt;
+}
+
+/* -- Fonts (local files copied by generate_content_guide.py) -- */
+@font-face {
+  font-family: "PP Agrandir Heavy";
+  src: url("./fonts/PPAgrandir-Heavy.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("./fonts/Inter-VariableFont_slnt,wght.ttf") format("truetype-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+
+/* -- Page -- */
+@page {
+  size: A4;
+  margin: 20mm 22mm 22mm 22mm;
+}
+
+@page :first {
+  margin: 0;
+}
+
+/* -- Base -- */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: 10.5pt;
+  line-height: 1.55;
+  color: var(--c-ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+p {
+  margin: 0 0 8pt 0;
+  font-size: 10.5pt;
+  line-height: 1.55;
+  color: var(--c-ink);
+}
+
+p + p { margin-top: 0; }
+
+em, i { font-style: italic; color: var(--c-ink-muted); }
+strong, b { font-weight: 700; color: var(--c-oxford); }
+
+/* -- Headings -- */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--c-oxford);
+  letter-spacing: -0.005em;
+  page-break-after: avoid;
+  break-after: avoid;
+}
+
+h1 {
+  font-size: 26pt;
+  line-height: 1.1;
+  margin: 0 0 14pt 0;
+  padding: 0 0 8pt 0;
+  border-bottom: 2pt solid var(--c-mauve);
+  page-break-before: always;
+  break-before: page;
+}
+
+/* The very first h1 should not force a page break (cover handles its own break) */
+h1:first-of-type {
+  page-break-before: avoid;
+  break-before: avoid;
+}
+
+h1.title {
+  font-size: 22pt;
+  color: #fff;
+  background: var(--c-oxford);
+  border: none;
+  border-radius: var(--r-md);
+  padding: 14pt 18pt;
+  margin: 0 0 18pt 0;
+  page-break-before: always;
+  break-before: page;
+}
+
+h1.large-centered {
+  font-size: 42pt;
+  text-align: center;
+  border: none;
+  padding: 6pt 0;
+  margin: 0 0 6pt 0;
+  page-break-before: avoid;
+  break-before: avoid;
+}
+
+h2 {
+  font-size: 17pt;
+  line-height: 1.2;
+  margin: 18pt 0 8pt 0;
+  padding-bottom: 4pt;
+  border-bottom: 0.75pt solid var(--c-mauve);
+}
+
+h2.large-centered {
+  font-size: 18pt;
+  text-align: center;
+  border: none;
+  color: var(--c-mauve);
+}
+
+h3 {
+  font-size: 13.5pt;
+  margin: 14pt 0 6pt 0;
+}
+
+h4, h5, h6 {
+  margin: 12pt 0 4pt 0;
+  display: flex;
+  align-items: center;
+  gap: 6pt;
+}
+
+h4 { font-size: 12pt; }
+h5 { font-size: 11pt; }
+h6 { font-size: 10.5pt; text-transform: uppercase; letter-spacing: 0.04em; }
+
+h4::before,
+h5::before,
+h6::before {
+  content: "";
+  display: inline-block;
+  width: 8pt;
+  height: 8pt;
+  border-radius: 2pt;
+  flex-shrink: 0;
+}
+
+h4::before { background: var(--c-mauve); }
+h5::before { background: var(--c-emerald); border-radius: 50%; }
+h6::before { background: var(--c-inchworm); }
+
+/* -- Lists -- */
+ol, ul {
+  margin: 6pt 0 10pt 0;
+  padding-left: 18pt;
+  font-size: 10.5pt;
+}
+
+ol li, ul li {
+  margin-bottom: 4pt;
+  line-height: 1.5;
+}
+
+ul {
+  list-style: none;
+  padding-left: 16pt;
+}
+
+ul li {
+  position: relative;
+  padding-left: 12pt;
+}
+
+ul li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 5pt;
+  height: 5pt;
+  background: var(--c-mauve);
+  border-radius: 2pt;
+}
+
+ol { list-style-type: decimal; }
+ol li::marker { color: var(--c-oxford); font-weight: 700; }
+
+/* Nested lists */
+ul ul, ul ol, ol ul, ol ol {
+  margin: 4pt 0 4pt 0;
+}
+
+ul ul li::before { background: var(--c-emerald); border-radius: 50%; }
+ul ul ul li::before { background: var(--c-inchworm); }
+
+/* -- Links -- */
+a {
+  color: var(--c-oxford);
+  text-decoration: underline;
+  text-decoration-color: var(--c-mauve);
+  text-decoration-thickness: 0.75pt;
+  text-underline-offset: 2pt;
+  font-family: inherit;
+}
+
+a:hover { text-decoration-color: var(--c-frostbite); }
+
+/* -- Code -- */
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+  font-feature-settings: "liga" 0;
+}
+
+p code, li code, td code, h1 code, h2 code, h3 code, h4 code, h5 code, h6 code {
+  background: var(--c-mauve-wash);
+  color: var(--c-oxford);
+  border-radius: var(--r-sm);
+  padding: 1pt 4pt;
+  font-size: 0.92em;
+  border: none;
+}
+
+pre {
+  background: var(--c-oxford);
+  color: var(--c-inchworm);
+  border-radius: var(--r-md);
+  padding: 12pt 14pt;
+  margin: 8pt 0 12pt 0;
+  font-size: 9pt;
+  line-height: 1.5;
+  overflow: visible;
+  white-space: pre-wrap;
+  word-break: break-word;
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  font-size: inherit;
+}
+
+/* -- Blockquote (default + semantic variants) -- */
+blockquote {
+  margin: 10pt 0;
+  padding: 10pt 14pt 10pt 16pt;
+  background: var(--c-mauve-wash);
+  border: none;
+  border-left: 3pt solid var(--c-mauve);
+  border-radius: var(--r-sm);
+  font-size: 10.5pt;
+  color: var(--c-ink);
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+blockquote p { margin: 0; }
+blockquote p + p { margin-top: 6pt; }
+
+blockquote.note,
+blockquote.tip,
+blockquote.warning {
+  position: relative;
+  padding-left: 32pt;
+}
+
+blockquote.note::before,
+blockquote.tip::before,
+blockquote.warning::before {
+  content: "";
+  position: absolute;
+  left: 12pt;
+  top: 13pt;
+  width: 10pt;
+  height: 10pt;
+  border-radius: 50%;
+}
+
+blockquote.note {
+  background: var(--c-mauve-wash);
+  border-left-color: var(--c-mauve);
+}
+blockquote.note::before { background: var(--c-mauve); }
+
+blockquote.tip {
+  background: var(--c-inchworm-wash);
+  border-left-color: var(--c-inchworm);
+}
+blockquote.tip::before { background: var(--c-inchworm); }
+
+blockquote.warning {
+  background: var(--c-frostbite-wash);
+  border-left-color: var(--c-frostbite);
+}
+blockquote.warning::before { background: var(--c-frostbite); }
+
+/* -- Tables -- */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 10pt 0 14pt 0;
+  font-size: 10pt;
+  table-layout: auto;
+  page-break-inside: auto;
+  break-inside: auto;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 0.5pt solid var(--c-rule);
+}
+
+table th,
+table td {
+  padding: 8pt 10pt;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 0.5pt solid var(--c-rule);
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+table th {
+  background: var(--c-oxford);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10pt;
+  letter-spacing: 0.01em;
+  border-bottom: none;
+}
+
+table tbody tr:nth-child(even) { background: var(--c-mauve-wash); }
+table tbody tr:last-child td { border-bottom: none; }
+
+table img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--r-sm);
+}
+
+table tr {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+/* -- "Hidden" tables (used as 2-column image+text layout) -- */
+.hidden_table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+  margin: 8pt 0 12pt 0;
+}
+
+.hidden_table th,
+.hidden_table td {
+  border: none;
+  padding: 4pt 6pt;
+  background: transparent !important;
+  vertical-align: top;
+}
+
+.hidden_table td:first-child { width: 68%; }
+.hidden_table td:last-child { width: 32%; padding-left: 12pt; }
+
+.hidden_table img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--r-md);
+}
+
+/* -- Legacy cover header (kept compatible with current TEMPLATE.md) -- */
+.header { margin-bottom: 12pt; }
+
+.header table {
+  width: 100%;
+  border: none;
+  border-radius: 0;
+  border-collapse: collapse;
+  margin: 0;
+  table-layout: fixed;
+  background: transparent;
+  overflow: visible;
+}
+
+.header table th,
+.header table td {
+  background: #fff !important;
+  border: none !important;
+  padding: 0;
+  height: 64pt;
+  vertical-align: middle;
+  text-align: center;
+  font-family: inherit;
+  font-weight: normal;
+  color: inherit;
+  position: relative;
+}
+
+.header table th img,
+.header table td img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: inline-block;
+}
+
+/* -- Improved opt-in cover (use these classes in TEMPLATE.md when ready) -- */
+.cover {
+  position: relative;
+  width: 210mm;
+  height: 297mm;
+  margin: 0;
+  padding: 28mm 24mm;
+  box-sizing: border-box;
+  background: var(--c-oxford);
+  color: #fff;
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+}
+
+.cover .cover-mark {
+  width: 40pt;
+  height: auto;
+  margin-bottom: 18mm;
+}
+
+.cover .cover-eyebrow {
+  font-family: var(--font-body);
+  font-size: 11pt;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--c-mauve);
+  margin: 0 0 8pt 0;
+}
+
+.cover h1.cover-title,
+.cover .cover-title {
+  font-family: var(--font-display);
+  font-size: 56pt;
+  line-height: 1.02;
+  color: #fff;
+  margin: 0 0 12pt 0;
+  border: none;
+  padding: 0;
+  letter-spacing: -0.01em;
+  max-width: 75%;
+  page-break-before: avoid;
+  break-before: avoid;
+}
+
+.cover .cover-subtitle {
+  font-family: var(--font-display);
+  font-size: 22pt;
+  color: var(--c-mauve);
+  margin: 0 0 24pt 0;
+}
+
+.cover .cover-meta {
+  position: absolute;
+  bottom: 24mm;
+  left: 24mm;
+  right: 24mm;
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: 9.5pt;
+  color: var(--c-mauve);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Decorative shape stack for the cover (Mauve / Frostbite / Inchworm / Emerald) */
+.cover .cover-shapes {
+  position: absolute;
+  right: -10mm;
+  top: 35mm;
+  width: 90mm;
+  height: 200mm;
+}
+
+.cover .cover-shapes .shape {
+  position: absolute;
+  border-radius: 14mm;
+}
+
+.cover .cover-shapes .shape-1 {
+  width: 48mm; height: 48mm;
+  top: 0; right: 18mm;
+  background: var(--c-emerald);
+  transform: rotate(-8deg);
+}
+.cover .cover-shapes .shape-2 {
+  width: 56mm; height: 56mm;
+  top: 38mm; right: 0;
+  background: var(--c-frostbite);
+  transform: rotate(12deg);
+}
+.cover .cover-shapes .shape-3 {
+  width: 44mm; height: 44mm;
+  top: 86mm; right: 24mm;
+  background: var(--c-inchworm);
+  transform: rotate(-4deg);
+  border-radius: 50%;
+}
+.cover .cover-shapes .shape-4 {
+  width: 60mm; height: 60mm;
+  top: 120mm; right: 8mm;
+  background: var(--c-mauve);
+  transform: rotate(18deg);
+}
+
+/* -- Chapter divider (optional, opt-in via class) -- */
+.chapter-divider {
+  page-break-before: always;
+  break-before: page;
+  page-break-after: always;
+  break-after: page;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 240mm;
+  text-align: left;
+}
+
+.chapter-divider .chapter-eyebrow {
+  font-family: var(--font-body);
+  font-size: 10pt;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--c-mauve);
+  margin-bottom: 8pt;
+}
+
+.chapter-divider h1 {
+  font-size: 48pt;
+  line-height: 1.05;
+  color: var(--c-oxford);
+  border: none;
+  padding: 0;
+  margin: 0 0 16pt 0;
+  page-break-before: avoid;
+  break-before: avoid;
+}
+
+.chapter-divider .chapter-accent {
+  width: 80pt;
+  height: 6pt;
+  background: var(--c-mauve);
+  border-radius: 3pt;
+}
+
+/* -- Images -- */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+img.main {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--r-md);
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+figure {
+  margin: 12pt 0;
+  text-align: center;
+}
+
+figure img { border-radius: var(--r-md); }
+
+figcaption {
+  font-size: 9pt;
+  color: var(--c-ink-muted);
+  margin-top: 4pt;
+  font-style: italic;
+}
+
+/* -- Horizontal rule -- */
+hr {
+  border: none;
+  height: 1pt;
+  background: var(--c-mauve);
+  margin: 14pt 0;
+  border-radius: 1pt;
+}
+
+/* -- Page-break safety -- */
+table, blockquote, pre, figure, img {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
+h1 + p, h2 + p, h3 + p, h4 + p, h5 + p, h6 + p {
+  page-break-before: avoid;
+  break-before: avoid;
+}
+
+/* -- Print-only color fidelity -- */
+* {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}

@@ -1,8 +1,32 @@
-# Content Guide
+<!--
+Cover page (full-bleed Oxford Blue).
+PRODUCTNAME is substituted by generate_content_guide.py from release.json.
+Edit cover-eyebrow / cover-meta strings if needed for your project.
+-->
+<section class="cover">
+  <img class="cover-mark" src="./images/shapescape_logo_on_dark.svg" alt="Shapescape" />
+  <p class="cover-eyebrow">Shapescape Studio</p>
+  <h1 class="cover-title">PRODUCTNAME</h1>
+  <p class="cover-subtitle">Content Guide</p>
+  <div class="cover-meta">
+    <span>shapescape.com</span>
+    <span>Marketplace Submission</span>
+  </div>
+  <div class="cover-shapes" aria-hidden="true">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+  </div>
+</section>
+
+<div style="page-break-after: always;"></div>
+
+<h1 class="title">CONTENTS</h1>
+
 _The purpose of this guide is to provide the reader with all the necessary information to review this product thoroughly._
 
-# Contents
-_The items in this section are hyperlinks that allow for easier navigation through the document._
+_The items below are hyperlinks for easy navigation._
 
 - **[Known Issues](#known-issues)**
   - [Assertion Errors](#assertion-errors)
@@ -39,7 +63,7 @@ _The items in this section are hyperlinks that allow for easier navigation throu
 
 <div style="page-break-after: always;"></div>
 
-# KNOWN ISSUES
+<h1 class="title">KNOWN ISSUES</h1>
 This section lists issues that we have identified ourselves but are unable or unwilling to fix ourselves due to a multitude of reasons.
 
 ## Assertion Errors
@@ -58,7 +82,7 @@ Listed below are intentional design decisions that may not be clear enough when 
 :generate: insert("templates/known_issues/intentional_design.md")
 
 
-# DESIGN
+<h1 class="title">DESIGN</h1>
 _This section contains all the relevant information that the user needs to successfully complete the product._
 
 
@@ -112,7 +136,7 @@ Every entity used for trading:
 
 <div style="page-break-after: always;"></div>
 
-# TECHNICAL ELEMENTS
+<h1 class="title">TECHNICAL ELEMENTS</h1>
 _The purpose of this section is to inform the user about specific game entities, items, or sounds, enhancing their overall understanding of the product._
 
 ## Changes to Minecraft Functionality
@@ -210,6 +234,6 @@ Invisible entities that affect the game in some way:
 
 <div style="page-break-after: always;"></div>
 
-# Changelog
+<h1 class="title">CHANGELOG</h1>
 _This section will contain the changelog in case of updates._
 :generate: insert("templates/most_recent_changes.md")
