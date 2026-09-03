@@ -211,7 +211,7 @@ Entities that are visible but don't interact with the player directly:
 
 Invisible entities that affect the game in some way:
 
-:generate: summarize_entities_in_tables("**/*.json", null, ["non-_player_facing_utility"])
+:generate: summarize_entities_in_tables("**/*.json", null, ["non_player_facing_utility"])
 
 ## Trades
 
